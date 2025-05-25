@@ -1,6 +1,6 @@
 # MES (Manufacturing Execution System) PoC
 
-1. 데이터 수집 : 센서 기반 자동 수집 (OPC-UA, MQTT), 실시간 수집 로그 시각화
+1. 데이터 수집 : OPC-UA 프로토콜 사용, 실시간 수집 (WebSocket)
 2. 불량 예측 AI : 공정데이터 기반 이상 감지/불량 예측 (AutoML + Scikit-learn / LSTM)
 3. RPA 연계 : 생산일지, 품질보고서 자동화 (Slack WebHook 대체)
 4. 시각화 : Grafana
@@ -8,7 +8,7 @@
 6. 모듈화 아키텍처 : Spring Boot, Spring Cloud 기반 MSA 구조로 모듈 분리
 
 센서 시뮬레이터
-PLC -> MQTT/OPC
+PLC -> OPC/MQTT
 Data Ingestor 서비스
 
 [Frontend]
