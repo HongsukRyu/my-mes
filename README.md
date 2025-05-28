@@ -24,8 +24,13 @@ Data Ingestor 서비스
 
 
 [Tech Stack]
+
 Backend: Spring Boot 3.2.0, Java 21
+
 OPC-UA: Eclipse Milo 0.6.8
+
 Database: H2 (개발용), JPA/Hibernate
+
 Build Tool: Gradle
+
 기타: Lombok, Jackson, Spring Data JPA
