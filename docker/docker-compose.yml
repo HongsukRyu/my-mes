@@ -1,0 +1,67 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  mes-core:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mes-core-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - OPCUA_ENDPOINT=opc.tcp://opcua-server:4840
+      - DB_HOST=postgres
+      - DB_USERNAME=mes_user
+      - DB_PASSWORD=mes_password
+    depends_on:
+      - postgres
+      - opcua-server
+    networks:
+      - mes-network
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: mes-postgres
+    environment:
+      POSTGRES_DB: mesdb
+      POSTGRES_USER: mes_user
+      POSTGRES_PASSWORD: mes_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - mes-network
+    restart: unless-stopped
+
+  opcua-server:
+    image: open62541/open62541:latest
+    container_name: mes-opcua-server
+    ports:
+      - "4840:4840"
+    networks:
+      - mes-network
+    restart: unless-stopped
+    command: ["/usr/bin/ua_server_ctt", "4840"]
+
+  redis:
+    image: redis:7-alpine
+    container_name: mes-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - mes-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  mes-network:
+    driver: bridge
