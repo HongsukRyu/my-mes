@@ -22,12 +22,16 @@ Data Ingestor 서비스
 2) 실적 등록 API (수량, 작업자, 설비 등) -> BarCode Printer 에뮬레이터 or QR Code Generator
 3) 불량 유형 등록 및 이력 관리 API
 
-기술 스택
 
+[Tech Stack]
 Backend: Spring Boot 3.2.0, Java 21
+
 OPC-UA: Eclipse Milo 0.6.8
+
 Database: H2 (개발용), JPA/Hibernate
+
 Build Tool: Gradle
+
 기타: Lombok, Jackson, Spring Data JPA
 
 📁 프로젝트 구조
@@ -43,15 +47,16 @@ src/main/java/com/mes/poc/
 │   ├── ProductionData.java         # 생산 데이터 엔티티
 │   └── Alarm.java                  # 알람 엔티티
 ├── repository/
-│   ├── EquipmentRepository.java    # 장비 리포지토리
-│   ├── ProcessDataRepository.java  # 공정 데이터 리포지토리
+│   ├── EquipmentRepository.java     # 장비 리포지토리
+│   ├── ProcessDataRepository.java   # 공정 데이터 리포지토리
 │   ├── ProductionDataRepository.java # 생산 데이터 리포지토리
-│   └── AlarmRepository.java        # 알람 리포지토리
+│   └── AlarmRepository.java         # 알람 리포지토리
 ├── service/
-│   ├── OpcUaClientService.java     # OPC-UA 클라이언트 서비스
-│   ├── DataCollectionService.java  # 데이터 수집 서비스
-│   ├── AlarmService.java           # 알람 서비스
-│   └── ProductionService.java      # 생산 관리 서비스
+│   ├── OpcUaClientService.java      # OPC-UA 클라이언트 서비스
+│   ├── DataCollectionService.java   # 데이터 수집 서비스
+|   ├── ProcessDataValueService.java # 데이터 처리 서비스
+│   ├── AlarmService.java            # 알람 서비스
+│   └── ProductionService.java       # 생산 관리 서비스
 ├── controller/
 │   ├── EquipmentController.java    # 장비 API
 │   ├── ProcessDataController.java  # 공정 데이터 API
