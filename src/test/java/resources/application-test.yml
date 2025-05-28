@@ -1,0 +1,57 @@
+spring:
+  application:
+    name: mes-poc
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true
+
+# OPC-UA Configuration
+opcua:
+  endpoint: "opc.tcp://localhost:4840"
+  security-policy: "None"
+  message-security-mode: "None"
+  application-name: "MES-Core-Client"
+  application-uri: "urn:mes:core:client"
+  product-uri: "urn:mes:core:product"
+  request-timeout: 5000
+  session-timeout: 60000
+  subscription-publishing-interval: 1000.0
+  nodes:
+    - nodeId: "ns=2;i=1001"
+      name: "Temperature"
+      dataType: "DOUBLE"
+    - nodeId: "ns=2;i=1002"
+      name: "Pressure"
+      dataType: "DOUBLE"
+    - nodeId: "ns=2;i=1003"
+      name: "EquipmentStatus"
+      dataType: "STRING"
+    - nodeId: "ns=2;i=1004"
+      name: "ProductionCount"
+      dataType: "INTEGER"
+
+# Scheduling Configuration
+scheduler:
+  data-collection:
+    enabled: false
+  alarm-check:
+    enabled: false
+
+# Logging
+logging:
+  level:
+    com.mes.poc: DEBUG
+    org.eclipse.milo: INFO
+    org.springframework: INFO
