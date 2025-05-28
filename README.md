@@ -15,6 +15,8 @@ Data Ingestor 서비스
 
 [Frontend]
 - React
+
+
 [Backend]
 - Spring Boot + JPA + PostgreSQL
 
