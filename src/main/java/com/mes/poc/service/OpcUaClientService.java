@@ -221,7 +221,13 @@ public class OpcUaClientService {
     }
 
     public boolean isConnected() {
-        return client != null && client.getSession().isDone();
+//        return client != null &&
+//                client.getSession().isDone() &&
+//                !client.getSession().isCompletedExceptionally();
+        // check the session id
+        return client != null &&
+                client.getSession().isDone() &&
+                client.getSession().join() != null;
     }
 
     public void reconnect() {
