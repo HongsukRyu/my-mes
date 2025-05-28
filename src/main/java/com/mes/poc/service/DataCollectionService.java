@@ -84,7 +84,6 @@ public class DataCollectionService {
                     if (throwable != null) {
                         log.error("Error reading batch data", throwable);
                     } else {
-
                         for (int i = 0; i < dataValues.size(); i++) {
                             DataValue dataValue = dataValues.get(i);
                             OpcUaConfigProperties.NodeConfiguration nodeConfig = config.getNodes().get(i);

@@ -1,0 +1,9 @@
+# docker/.dockerignore
+target/
+.git/
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+*.log
+logs/
