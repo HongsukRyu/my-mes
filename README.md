@@ -46,9 +46,9 @@ R- EST API: 웹 기반 데이터 조회 및 제어 인터페이스
 
 
 #### 1. 프로젝트 클론 및 빌드
-   git clone <repository-url>
-   cd my-mes
-   ./gradlew clean build
+- git clone <repository-url>
+- cd my-mes
+- ./gradlew clean build
 
 #### 2. 설정 파일 수정
    - src/main/resources/application.yml 파일에서 OPC-UA 서버 정보 수정:
@@ -63,7 +63,7 @@ R- EST API: 웹 기반 데이터 조회 및 제어 인터페이스
 
 
 #### 3. 애플리케이션 실행
-   - 1) bash./gradlew bootRun
+   - 1) ./gradlew bootRun
    - 2) JAR 파일로 실행:
      - java -jar build/libs/poc-0.0.1-SNAPSHOT.jar
 
