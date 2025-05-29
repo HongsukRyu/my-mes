@@ -72,3 +72,48 @@ R- EST API: 웹 기반 데이터 조회 및 제어 인터페이스
 - 애플리케이션: http://localhost:8080
 - H2 콘솔: http://localhost:8080/h2-console
 - 헬스체크: http://localhost:8080/api/health
+
+### 🐳 Docker 환경에서 OPC-UA 서버 연결
+
+#### 1. Docker OPC-UA 서버만 실행 (권장 - 개발 환경)
+```bash
+# OPC-UA 서버만 Docker로 실행
+cd docker
+docker-compose up opcua-server
+
+# 환경변수 설정하여 Spring Boot 애플리케이션 실행
+OPCUA_ENDPOINT=opc.tcp://localhost:4840 ./gradlew bootRun
+```
+
+#### 2. 전체 Docker 환경 실행
+```bash
+cd docker
+docker-compose up --build
+```
+
+#### 🔧 OPC-UA 연결 문제 해결
+
+**문제**: OPC-UA 클라이언트가 지속적으로 재접속을 시도하는 경우
+
+**해결방법**:
+
+1. **네트워크 연결 확인**
+```bash
+# OPC-UA 서버 포트 확인
+netstat -an | grep 4840
+# 또는
+telnet localhost 4840
+```
+
+2. **환경변수 설정**
+   - 로컬 개발: `OPCUA_ENDPOINT=opc.tcp://localhost:4840`
+   - Docker 환경: `OPCUA_ENDPOINT=opc.tcp://opcua-server:4840`
+
+3. **로그 확인**
+   - 애플리케이션 로그에서 연결 실패 원인 확인
+   - DEBUG 레벨 로깅 활성화: `logging.level.com.mes.poc=DEBUG`
+
+4. **일반적인 문제들**
+   - Docker 네트워크 분리: 같은 Docker 네트워크에 있는지 확인
+   - 방화벽: 4840 포트 접근 허용 확인
+   - OPC-UA 서버 상태: 서버가 정상적으로 실행 중인지 확인
