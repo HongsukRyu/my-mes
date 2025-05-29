@@ -62,33 +62,53 @@ public class OpcUaClientService {
     }
 
     private void connect() throws Exception {
-        EndpointDescription endpoint = chooseEndpoint(config.getEndpoint(), config.getSecurityPolicy());
-        if (endpoint == null) {
-            throw new IllegalArgumentException("No suitable endpoint found for " + config.getEndpoint());
+        log.info("Attempting to connect to OPC-UA Server: {}", config.getEndpoint());
+        
+        try {
+            EndpointDescription endpoint = chooseEndpoint(config.getEndpoint(), config.getSecurityPolicy());
+            if (endpoint == null) {
+                throw new IllegalArgumentException("No suitable endpoint found for " + config.getEndpoint());
+            }
+            
+            OpcUaClientConfig clientConfig = OpcUaClientConfig.builder()
+                    .setApplicationName(LocalizedText.english(config.getApplicationName()))
+                    .setApplicationUri(config.getApplicationUri())
+                    .setProductUri(config.getProductUri())
+                    .setEndpoint(endpoint)
+                    .setIdentityProvider(new AnonymousProvider())
+                    .setRequestTimeout(UInteger.valueOf(config.getRequestTimeout()))
+                    .setSessionTimeout(UInteger.valueOf(config.getSessionTimeout()))
+                    .build();
+
+            client = OpcUaClient.create(clientConfig);
+            client.connect().get();
+
+            log.info("Successfully connected to OPC-UA Server: {}", config.getEndpoint());
+        } catch (Exception e) {
+            log.error("Failed to connect to OPC-UA Server: {}. Error: {}", config.getEndpoint(), e.getMessage());
+            throw e;
         }
-        OpcUaClientConfig clientConfig = OpcUaClientConfig.builder()
-                .setApplicationName(LocalizedText.english(config.getApplicationName()))
-                .setApplicationUri(config.getApplicationUri())
-                .setProductUri(config.getProductUri())
-                .setEndpoint(endpoint)
-                .setIdentityProvider(new AnonymousProvider())
-                .setRequestTimeout(UInteger.valueOf(config.getRequestTimeout()))
-                .setSessionTimeout(UInteger.valueOf(config.getSessionTimeout()))
-                .build();
-
-        client = OpcUaClient.create(clientConfig);
-        client.connect().get();
-
-        log.info("Connected to OPC-UA Server: {}", config.getEndpoint());
     }
 
     private EndpointDescription chooseEndpoint(String url, String securityPolicyUri) throws Exception {
-        List<EndpointDescription> endpoints = DiscoveryClient.getEndpoints(url).get();
+        try {
+            log.debug("Discovering endpoints for URL: {}", url);
+            List<EndpointDescription> endpoints = DiscoveryClient.getEndpoints(url).get();
+            log.debug("Found {} endpoints", endpoints.size());
+            
+            for (EndpointDescription endpoint : endpoints) {
+                log.debug("Available endpoint: {} with security policy: {}", 
+                    endpoint.getEndpointUrl(), endpoint.getSecurityPolicyUri());
+            }
 
-        return endpoints.stream()
-                .filter(e -> e.getSecurityPolicyUri().equals(securityPolicyUri))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Endpoint not found"));
+            return endpoints.stream()
+                    .filter(e -> e.getSecurityPolicyUri().equals(securityPolicyUri))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Endpoint not found with security policy: " + securityPolicyUri));
+        } catch (Exception e) {
+            log.error("Error discovering endpoints for URL: {}. Error: {}", url, e.getMessage());
+            throw e;
+        }
     }
 
     public void disconnect() {
@@ -231,13 +251,18 @@ public class OpcUaClientService {
     }
 
     public void reconnect() {
-        log.info("Attempting to reconnect to OPC-UA Server");
+        log.info("Attempting to reconnect to OPC-UA Server: {}", config.getEndpoint());
         disconnect();
         try {
             Thread.sleep(5000); // Wait 5 seconds before reconnecting
             connect();
+            log.info("Successfully reconnected to OPC-UA Server");
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Reconnection interrupted", e);
         } catch (Exception e) {
-            log.error("Failed to reconnect to OPC-UA Server", e);
+            log.error("Failed to reconnect to OPC-UA Server: {}. Will retry on next schedule. Error: {}", 
+                config.getEndpoint(), e.getMessage());
         }
     }
 }

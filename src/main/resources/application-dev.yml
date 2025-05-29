@@ -22,7 +22,7 @@ spring:
 
 # OPC-UA Configuration
 opcua:
-  endpoint: "opc.tcp://localhost:4840"
+  endpoint: ${OPCUA_ENDPOINT:opc.tcp://localhost:4840}
   security-policy: "None"
   message-security-mode: "None"
   application-name: "MES-Poc-Client"
