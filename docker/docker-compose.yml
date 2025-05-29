@@ -49,6 +49,11 @@ services:
       - mes-network
     restart: unless-stopped
     command: ["/usr/bin/ua_server_ctt", "4840"]
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "4840"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   redis:
     image: redis:7-alpine
